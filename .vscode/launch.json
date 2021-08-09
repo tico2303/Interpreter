@@ -9,6 +9,13 @@
             "name": "Launch AstPrinter",
             "request": "launch",
             "mainClass": "com.craftinginterpreters.lox.AstPrinter",
+            "projectName": "CraftingInterpreters_45b253bf"
+        },
+        {
+            "type": "java",
+            "name": "Launch AstPrinter",
+            "request": "launch",
+            "mainClass": "com.craftinginterpreters.lox.AstPrinter",
             "projectName": "Interpreter_c75716c6"
         },
         {
