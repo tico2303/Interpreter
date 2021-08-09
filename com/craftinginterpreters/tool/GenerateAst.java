@@ -83,5 +83,6 @@ public class GenerateAst {
             writer.println("        R visit" + typeName + baseName + "(" + typeName + " " + baseName.toLowerCase() + ");");
         }
         writer.println("    }");
+        
     }
 }
