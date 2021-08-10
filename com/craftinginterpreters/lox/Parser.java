@@ -37,6 +37,13 @@ class Parser {
     Parser(List<Token> tokens){
         this.tokens = tokens;
     }
+    Expr parse(){
+        try{
+            return expression();
+        }catch(ParseError error){
+            return null;
+        }
+    }
     private Expr expression(){
         return equality();
     }
@@ -108,6 +115,7 @@ class Parser {
             consume(RIGHT_PAREN, "Expect ')' after expression.");
             return new Expr.Grouping(expr);
         }
+        throw error(peek(), "Expect expression.");
     }
     private boolean match(TokenType... types){
         for (TokenType type : types){
@@ -126,6 +134,27 @@ class Parser {
     private ParseError error(Token token, String message){
         Lox.error(token, message);
         return new ParseError();
+    }
+    private void synchronize(){
+        advance();
+
+        while (!isAtEnd()){
+            //if end of statement stop
+            if (previous().type == SEMICOLON) return;
+            //Discards tokens until we reach statement boundary
+            switch (peek().type){
+                case CLASS:
+                case FUN:
+                case VAR:
+                case FOR:
+                case IF:
+                case WHILE:
+                case PRINT:
+                case RETURN:
+                    return;
+            }
+            advance();
+        }
     }
     private boolean check(TokenType type){
         if (isAtEnd()) return false;
