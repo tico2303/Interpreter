@@ -43,8 +43,8 @@
             "name": "Debug Launch Lox",
             "request": "launch",
             "mainClass": "com.craftinginterpreters.lox.Lox",
-            "projectName": "CraftingInterpreters_45b253bf",
-            "args": "myprogram.lox"
+            "projectName": "CraftingInterpreters_45b253bf"
+            //"args": "myprogram.lox"
         }
     ]
 }
