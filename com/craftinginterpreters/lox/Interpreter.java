@@ -96,8 +96,16 @@ class Interpreter implements Expr.Visitor<Object>{
                 if (left instanceof Double && right instanceof Double){
                     return (double)left + (double)right;
                 }
+
+                //Allow string and number concatenation 
+                if (left instanceof Double && right instanceof String){
+                    return (String)stringify(left) + (String)right;
+                }
+                if (left instanceof String && right instanceof Double){
+                    return (String)left + (String)stringify(right);
+                }
                 throw new RuntimeError(expr.operator, 
-                            "Dude...Operands must be either two number or two strings.");
+                            "Dude...Operands must be either two numbers or two strings.");
             case SLASH:
                 checkNumberOperands(expr.operator, left, right);
                 return (double)left / (double)right;
