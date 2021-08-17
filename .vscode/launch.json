@@ -6,6 +6,14 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch GenerateAst",
+            "request": "launch",
+            "mainClass": "com.craftinginterpreters.tool.GenerateAst",
+            "projectName": "CraftingInterpreters_45b253bf",
+            "args": "C:\\Users\\MartinezR\\Downloads\\test_scripts\\CraftingInterpreters\\com\\craftinginterpreters\\lox"
+        },
+        {
+            "type": "java",
             "name": "Launch AstPrinter",
             "request": "launch",
             "mainClass": "com.craftinginterpreters.lox.AstPrinter",
@@ -44,7 +52,6 @@
             "request": "launch",
             "mainClass": "com.craftinginterpreters.lox.Lox",
             "projectName": "CraftingInterpreters_45b253bf"
-            //"args": "myprogram.lox"
         }
     ]
 }
