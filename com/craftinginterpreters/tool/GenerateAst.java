@@ -17,6 +17,7 @@ public class GenerateAst {
         //ClassName ':' list of fields comma seperated (eg. Type name)
         //Creates the Expression syntax tree
         defineAst(outputDir, "Expr", Arrays.asList(
+            "Assign    : Token name, Expr value", 
             "Binary    : Expr left, Token operator, Expr right",
             "Grouping  : Expr expression",
             "Literal   : Object value",
