@@ -1,7 +1,7 @@
 package com.craftinginterpreters.lox;
 
 import java.util.List;
-
+import java.util.ArrayList;
 import static com.craftinginterpreters.lox.TokenType.*;
 /*
 Below is the expression Grammer
@@ -28,7 +28,29 @@ Nonterminal	        Call to that rule’s function
 ?	                if statement
 -------------------------------------------------------------
 
+
+Statement Grammer:
+
+program        → statement* EOF ;
+
+statement      → exprStmt
+               | printStmt ;
+
+exprStmt       → expression ";" ;
+printStmt      → "print" expression ";" ;
+---------------------------------------------------------------------
+
+Variable grammer
+program        → declaration* EOF ;
+
+declaration    → varDecl
+               | statement ;
+
+statement      → exprStmt
+               | printStmt ;
 */
+
+
 class Parser {
     private static class ParseError extends RuntimeException{}
     private final List<Token> tokens;
@@ -37,12 +59,47 @@ class Parser {
     Parser(List<Token> tokens){
         this.tokens = tokens;
     }
-    Expr parse(){
+    List<Stmt> parse(){
+        List<Stmt> statements = new ArrayList<>();
+        while (!isAtEnd()){
+            statements.add(declaration());
+        }
+        return statements;
+    }
+    private Stmt declaration(){
         try{
-            return expression();
-        }catch(ParseError error){
+            if (match(VAR)) return varDeclaration();
+
+            return statement();
+        }catch (ParseError error){
+            synchronize();
             return null;
         }
+    }
+    private Stmt statement(){
+        if (match(PRINT)) return printStatement();
+        return expressionStatement();
+    }
+    private Stmt printStatement(){
+        Expr value = expression();
+        consume(SEMICOLON, "Expected ';' after value dude.");
+        return new Stmt.Print(value);
+    }
+    private Stmt varDeclaration(){
+        Token name = consume(IDENTIFIER, "Excepted variable name dude.");
+
+        Expr initializer = null;
+        if (match(EQUAL)){
+            initializer = expression();
+        }
+
+        consume(SEMICOLON, "Expect ';' after variable declaration.");
+        return new Stmt.Var(name,initializer);
+    }
+    private Stmt expressionStatement(){
+        Expr expr = expression();
+        consume(SEMICOLON, "Expected ';' after expression dude.");
+        return new Stmt.Expression(expr);
     }
     private Expr expression(){
         return equality();
@@ -108,6 +165,9 @@ class Parser {
 
         if (match(NUMBER, STRING)){
             return new Expr.Literal(previous().literal);
+        }
+        if (match(IDENTIFIER)){
+            return new Expr.Variable(previous());
         }
 
         if (match(LEFT_PAREN)){
