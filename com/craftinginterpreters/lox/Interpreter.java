@@ -128,9 +128,37 @@ class Interpreter implements Expr.Visitor<Object>,
     private void execute(Stmt stmt){
         stmt.accept(this);
     }
+    private void executeBlock(List<Stmt> statements,Environment environment){
+        Environment previous = this.environment;
+        try{
+            //set env to the current block scope env
+            this.environment = environment;
+
+            for (Stmt statement: statements){
+                execute(statement);
+            }
+        }finally{
+            //restore env to global scope
+            this.environment = previous;
+        }
+    }
+    @Override
+    public Void visitBlockStmt(Stmt.Block stmt){
+        executeBlock(stmt.statements, new Environment(environment));
+        return null;
+    }
     @Override
     public Void visitExpressionStmt(Stmt.Expression stmt){
         evaluate(stmt.expression);
+        return null;
+    }
+    @Override
+    public Void visitIfStmt(Stmt.If stmt){
+        if (isTruthy(evaluate(stmt.condition))){
+            execute(stmt.thenBranch);
+        } else if (stmt.elseBranch != null){
+            execute(stmt.elseBranch);
+        }
         return null;
     }
     @Override
