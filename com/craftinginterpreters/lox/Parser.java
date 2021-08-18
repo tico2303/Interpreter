@@ -53,6 +53,15 @@ Assignment Syntax
 expression     → assignment ;
 assignment     → IDENTIFIER "=" assignment
                | equality ;
+-----------------
+if Statement grammer
+statement      → exprStmt
+               | ifStmt
+               | printStmt
+               | block ;
+
+ifStmt         → "if" "(" expression ")" statement
+               ( "else" statement )? ;
 */
 
 
@@ -83,7 +92,21 @@ class Parser {
     }
     private Stmt statement(){
         if (match(PRINT)) return printStatement();
+        if (match(LEFT_BRACE)) return new Stmt.Block(block());
+        if (match(IF)) return ifStatement();
         return expressionStatement();
+    }
+    private Stmt ifStatement(){
+        consume(LEFT_PAREN, "Expected '(' after 'if' my-dude.");
+        Expr condition = expression();
+        consume(RIGHT_PAREN, "Expected ')' after 'if' my-dude.");
+        Stmt thenBranch = statement();
+        Stmt elseBranch = null;
+        if (match(ELSE)){
+            elseBranch = statement();
+        }
+        return new Stmt.If(condition, thenBranch, elseBranch);
+
     }
     private Stmt printStatement(){
         Expr value = expression();
@@ -106,6 +129,16 @@ class Parser {
         consume(SEMICOLON, "Expected ';' after expression dude.");
         return new Stmt.Expression(expr);
     }
+    private List<Stmt> block(){
+        List<Stmt> statements = new ArrayList<>();
+
+        while (!check(RIGHT_BRACE) && !isAtEnd()){
+            statements.add(declaration());
+        }
+
+        consume(RIGHT_BRACE, "Dude, totally Expected a '}' after block.");
+        return statements;
+    }
     private Expr expression(){
         return assignment();
     }
@@ -119,7 +152,7 @@ class Parser {
                 Token name = ((Expr.Variable)expr).name;
                 return new Expr.Assign(name, value);
             }
-            error(equals, "Dude, Invalid assignment target.");
+            error(equals, "My-Dude, Invalid assignment target.");
         }
         return expr;
     }
@@ -191,7 +224,7 @@ class Parser {
 
         if (match(LEFT_PAREN)){
             Expr expr = expression();
-            consume(RIGHT_PAREN, "Expect ')' after expression.");
+            consume(RIGHT_PAREN, "Expect ')' after expression, my-dude.");
             return new Expr.Grouping(expr);
         }
         throw error(peek(), "Expect expression.");
