@@ -2,6 +2,7 @@ package com.craftinginterpreters.lox;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 import static com.craftinginterpreters.lox.TokenType.*;
 /*
 Below is the expression Grammer
@@ -79,6 +80,19 @@ statement      → exprStmt
                | block ;
 
 whileStmt      → "while" "(" expression ")" statement ;
+---------------------
+
+For-loop grammer
+statement      → exprStmt
+               | forStmt
+               | ifStmt
+               | printStmt
+               | whileStmt
+               | block ;
+
+forStmt        → "for" "(" ( varDecl | exprStmt | ";" )
+                 expression? ";"
+                 expression? ")" statement ;
 */
 
 
@@ -109,9 +123,50 @@ class Parser {
     }
     private Stmt statement(){
         if (match(PRINT)) return printStatement();
+        if (match(WHILE)) return whileStatement();
         if (match(LEFT_BRACE)) return new Stmt.Block(block());
         if (match(IF)) return ifStatement();
+        if (match(FOR)) return forStatement();
         return expressionStatement();
+    }
+    private Stmt forStatement(){
+        //initializer
+        consume(LEFT_PAREN, "Expected '(' after for dude.");
+        Stmt initializer;
+        if (match(SEMICOLON)){
+            initializer = null;
+        } else if (match(VAR)){
+            initializer = varDeclaration();
+        }else{
+            initializer = expressionStatement();
+        }
+        //condition
+        Expr condition = null;
+        if (!check(SEMICOLON)){
+            condition = expression();
+        }
+        consume(SEMICOLON, "Expected ';' aft loop condition broh.");
+
+        //increment
+        Expr increment = null;
+        if (!check(RIGHT_PAREN)){
+            increment = expression();
+        }
+        consume(RIGHT_PAREN, "Expected ')' after for clause.");
+        //body statement
+        Stmt body = statement();
+        if (increment != null){
+            body = new Stmt.Block(
+                Arrays.asList(body, new Stmt.Expression(increment))
+            );
+        }
+        if (condition == null) condition = new Expr.Literal(true);
+        body = new Stmt.While(condition, body);
+        if (initializer != null){
+            body = new Stmt.Block(Arrays.asList(initializer,body));
+        }
+        return body;
+        
     }
     private Stmt ifStatement(){
         consume(LEFT_PAREN, "Expected '(' after 'if' my-dude.");
@@ -140,6 +195,14 @@ class Parser {
 
         consume(SEMICOLON, "Expect ';' after variable declaration.");
         return new Stmt.Var(name,initializer);
+    }
+    private Stmt whileStatement(){
+        consume(LEFT_PAREN, "Expected '(' after 'while' dude.");
+        Expr condition = expression();
+        consume(RIGHT_PAREN, "Expected ')' after condtion broh.");
+        Stmt body = statement();
+
+        return new Stmt.While(condition, body);
     }
     private Stmt expressionStatement(){
         Expr expr = expression();
