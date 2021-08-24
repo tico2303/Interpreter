@@ -1,3 +1,14 @@
 print "this is a string";
 var temp = 1 + 3;
 print temp;
+for (var i = 1; i< 10; i=i+1){
+    print "This is the " + i + "th iteration";
+    if ( i == 1){
+        print "Got 1!";
+    }
+}
+var count = 0;
+while (count < 5){
+    print "while counting " + count + "all up in this.";
+    count = count +1;
+}
