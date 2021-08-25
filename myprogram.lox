@@ -1,6 +1,5 @@
 fun first(name,date){
     print "Calling firstFunction";
-    print name;
-    print date;
+    return name + date;
 }
-first(1,2);
+print first(1,2);

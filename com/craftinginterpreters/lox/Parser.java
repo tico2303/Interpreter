@@ -103,6 +103,18 @@ declaration    → funDecl
 funDecl        → "fun" function ;
 function       → IDENTIFIER "(" parameters? ")" block ;
 parameters     → IDENTIFIER ( "," IDENTIFIER )* ;
+
+----------------
+function return statements
+statement      → exprStmt
+               | forStmt
+               | ifStmt
+               | printStmt
+               | returnStmt
+               | whileStmt
+               | block ;
+
+returnStmt     → "return" expression? ";" ;
 */
 
 
@@ -134,6 +146,7 @@ class Parser {
     }
     private Stmt statement(){
         if (match(PRINT)) return printStatement();
+        if (match(RETURN)) return returnStatement();
         if (match(WHILE)) return whileStatement();
         if (match(LEFT_BRACE)) return new Stmt.Block(block());
         if (match(IF)) return ifStatement();
@@ -195,6 +208,15 @@ class Parser {
         Expr value = expression();
         consume(SEMICOLON, "Expected ';' after value dude.");
         return new Stmt.Print(value);
+    }
+    private Stmt returnStatement(){
+        Token keyword = previous();
+        Expr value = null;
+        if (!check(SEMICOLON)){
+            value = expression();
+        }
+        consume(SEMICOLON, "Expect ';' after return value.");
+        return new Stmt.Return(keyword, value);
     }
     private Stmt varDeclaration(){
         Token name = consume(IDENTIFIER, "Excepted variable name dude.");
