@@ -10,7 +10,7 @@ class LoxFunction implements LoxCallable {
     }
 
     @Override
-    Object call(Interpreter interpreter, List<Object> arguments){
+    public Object call(Interpreter interpreter, List<Object> arguments){
         //a new env is created when the func is called
         Environment environment = new Environment(interpreter.globals);
         for (int i=0; i < declaration.params.size(); i++){

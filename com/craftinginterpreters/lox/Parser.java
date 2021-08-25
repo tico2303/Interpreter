@@ -156,7 +156,7 @@ class Parser {
         if (!check(SEMICOLON)){
             condition = expression();
         }
-        consume(SEMICOLON, "Expected ';' aft loop condition broh.");
+        consume(SEMICOLON, "Expected ';' after loop condition broh.");
 
         //increment
         Expr increment = null;
@@ -222,8 +222,8 @@ class Parser {
     }
     private Stmt.Function function(String kind){
         Token name = consume(IDENTIFIER, "Expected " + kind + " name.");
+        consume(LEFT_PAREN, "Expect '(' after " + kind + " name.");
         List<Token> parameters = new ArrayList<>();
-
         if (!check(RIGHT_PAREN)){
             do{
                 if (parameters.size() >= 255){
@@ -393,7 +393,7 @@ class Parser {
     }
     private Token consume(TokenType type, String message){
         if (check(type)) return advance();
-
+        System.out.println("Consume: " + peek());
         throw error(peek(), message);
     }
     private ParseError error(Token token, String message){

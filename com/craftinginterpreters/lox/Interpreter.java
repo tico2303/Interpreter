@@ -177,7 +177,7 @@ class Interpreter implements Expr.Visitor<Object>,
     private void execute(Stmt stmt){
         stmt.accept(this);
     }
-    private void executeBlock(List<Stmt> statements,Environment environment){
+    void executeBlock(List<Stmt> statements,Environment environment){
         Environment previous = this.environment;
         try{
             //set env to the current block scope env
