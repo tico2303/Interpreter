@@ -1,12 +1,7 @@
-var a = "global";
-fun first(name,date){
-    //closures
-    fun showA(){
-       print a; 
+class CoffeeBean{
+    order(){
+        return "Ice Blended";
     }
-    showA();
-    var a = "block";
-    showA();
-    return;
 }
-print first(1,2);
+
+print CoffeeBean;
