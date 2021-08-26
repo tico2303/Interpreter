@@ -1,5 +1,12 @@
+var a = "global";
 fun first(name,date){
-    print "Calling firstFunction";
-    return name + date;
+    //closures
+    fun showA(){
+       print a; 
+    }
+    showA();
+    var a = "block";
+    showA();
+    return;
 }
 print first(1,2);
